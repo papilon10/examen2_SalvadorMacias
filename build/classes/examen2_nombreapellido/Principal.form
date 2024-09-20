@@ -175,6 +175,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Iniciar carrera"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton2MouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -258,6 +261,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Salvar Resultados"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btn_guardarResultadosMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

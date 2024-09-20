@@ -5,12 +5,16 @@
 package examen2_nombreapellido;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 
 /**
  *
@@ -81,6 +85,11 @@ public class Principal extends javax.swing.JFrame {
         });
 
         jButton2.setText("Iniciar carrera");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -157,6 +166,11 @@ public class Principal extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         btn_guardarResultados.setText("Salvar Resultados");
+        btn_guardarResultados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_guardarResultadosMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -210,15 +224,15 @@ public class Principal extends javax.swing.JFrame {
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
 
         JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showOpenDialog(this);
+        int state = fileChooser.showOpenDialog(this);
 
-        if (result == JFileChooser.APPROVE_OPTION) {
+        if (state == JFileChooser.APPROVE_OPTION) {
             File archivo = fileChooser.getSelectedFile();
             try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
                 String linea;
-                tortugas.clear(); 
+                tortugas.clear();
                 while ((linea = br.readLine()) != null) {
-                    String[] datos = linea.split(",");  
+                    String[] datos = linea.split(",");
                     if (datos.length == 3) {
                         String nombre = datos[0];
                         int velocidad = Integer.parseInt(datos[1]);
@@ -234,13 +248,60 @@ public class Principal extends javax.swing.JFrame {
                 for (tortuga t : tortugas) {
                     System.out.println(t);
                 }
+           
                 JOptionPane.showMessageDialog(this, "Archivo cargado con éxito");
             } catch (IOException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Error al cargar el archivo");
+
             }
         }
     }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        iniciarCarrera();
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void btn_guardarResultadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_guardarResultadosMouseClicked
+
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_guardarResultadosMouseClicked
+    
+    private void iniciarCarrera() {
+        if (tortugas.size() == 4) {
+
+            for (int i = 0; i < tortugas.size(); i++) {
+                int index = i;
+                tortuga t = tortugas.get(i);
+                new Thread(() -> {
+                    correrTortuga(t, index);
+                }).start();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Primero carga las tortugas.");
+        }
+    }
+
+    private void correrTortuga(tortuga tortuga, int index) {
+        int progreso = 0;
+        while (progreso < 100) {
+            try {
+
+                Thread.sleep(tortuga.getVelocidad());
+                progreso += (int) (Math.random() * 8);
+                barrasProgreso[index].setValue(progreso);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        synchronized (this) {
+            if (lblGanador.getText().equals("Ganador: ")) {
+                lblGanador.setText("Ganador: " + tortuga.getNombre());
+            }
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -278,6 +339,8 @@ public class Principal extends javax.swing.JFrame {
     }
 
     public static ArrayList<tortuga> tortugas = new ArrayList<>();
+    public static JProgressBar[] barrasProgreso;
+    public static JLabel lblGanador;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_guardarResultados;
