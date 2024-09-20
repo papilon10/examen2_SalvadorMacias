@@ -171,6 +171,11 @@ public class Principal extends javax.swing.JFrame {
                 btn_guardarResultadosMouseClicked(evt);
             }
         });
+        btn_guardarResultados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_guardarResultadosActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -248,7 +253,7 @@ public class Principal extends javax.swing.JFrame {
                 for (tortuga t : tortugas) {
                     System.out.println(t);
                 }
-           
+
                 JOptionPane.showMessageDialog(this, "Archivo cargado con éxito");
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -264,10 +269,30 @@ public class Principal extends javax.swing.JFrame {
 
     private void btn_guardarResultadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_guardarResultadosMouseClicked
 
-
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_guardarResultadosMouseClicked
-    
+
+    private void btn_guardarResultadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarResultadosActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showSaveDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File archivo = fileChooser.getSelectedFile();
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo))) {
+                for (int i = 0; i < jTable1.getRowCount(); i++) {
+                    String carrera = (String) jTable1.getValueAt(i, 0);
+                    String ganador = (String) jTable1.getValueAt(i, 1);
+                    bw.write(carrera + "," + ganador);
+                    bw.newLine();
+                }
+                JOptionPane.showMessageDialog(this, "Resultados guardados con éxito");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error al guardar el archivo");
+            }
+        }
+    }//GEN-LAST:event_btn_guardarResultadosActionPerformed
+
     private void iniciarCarrera() {
         if (tortugas.size() == 4) {
 
@@ -299,6 +324,7 @@ public class Principal extends javax.swing.JFrame {
         synchronized (this) {
             if (lblGanador.getText().equals("Ganador: ")) {
                 lblGanador.setText("Ganador: " + tortuga.getNombre());
+                //jTable1.addRow(new Object[]{"Carrera " + (jTable1.getRowCount() + 1), tortuga.getNombre()});
             }
         }
     }
